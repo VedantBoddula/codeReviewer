@@ -209,3 +209,40 @@ main .right {
   transform: scale(0.98);
   box-shadow: 0 0 5px rgba(255, 95, 109, 0.3);
 }
+
+/* Image Preview Container */
+.image-preview-container {
+  position: relative;
+  display: inline-block;
+  margin-top: 12px;
+}
+
+/* Image Style */
+.image-preview {
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  border: 2px solid #555;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+/* Remove Image Button (X) */
+.remove-image-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  font-size: 14px;
+  padding: 2px 6px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
+  transition: 0.2s ease;
+}
+
+.remove-image-btn:hover {
+  transform: scale(1.1);
+  background-color: darkred;
+}

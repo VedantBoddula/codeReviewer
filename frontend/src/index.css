@@ -66,3 +66,63 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Fixed button row styles */
+.button-row {
+  display: flex;
+  align-items: center;
+  /* gap: 15px; */
+  /* margin: 15px 0; */
+}
+
+.reviewBtn {
+ /* Increased horizontal padding from 20px to 30px for wider button */
+ padding: auto;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14.5px;
+  /* white-space: nowrap; */
+  /* height: 45px; Keep vertical height matching upload icon */
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* box-sizing: border-box; */
+  /* flex-shrink: 0; Prevent shrinking */
+}
+
+.reviewBtn:hover {
+  background: #0056b3;
+}
+
+.upload-icon {
+  cursor: pointer;
+  padding: 10px;
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-left: 15px;
+  /* padding-right: 5px 5px 5px 5px; */
+  /* width: 45px; */
+  /* height: 45px; */
+}
+
+.upload-icon:hover {
+  border-color: #007bff;
+  background: #0c0c0c;
+}
+
+.image-preview {
+  /* margin-left: 10px */
+  max-width: 150px;
+  max-height: 50px;
+  margin-top: 10px;
+  margin-left: 5px;
+  border-radius: 4px;
+
+}

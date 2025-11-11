@@ -7,7 +7,7 @@ import axios from "axios";
 import Markdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.min.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // ✅ eye icons
+import { FaEye, FaEyeSlash, FaImage } from "react-icons/fa";
 import './App.css';
 
 // ---------------- Navbar ----------------
@@ -15,7 +15,7 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    navigate('/'); // redirect to login page
+    navigate('/');
   };
 
   return (
@@ -26,7 +26,7 @@ function Navbar() {
   );
 }
 
-// ---------------- Password Input Component ----------------
+// ---------------- Password Input ----------------
 function PasswordInput({ password, setPassword }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -49,14 +49,13 @@ function PasswordInput({ password, setPassword }) {
           cursor: "pointer"
         }}
       >
-        
-        {showPassword ?  <FaEye/> : <FaEyeSlash />}
+        {showPassword ? <FaEye /> : <FaEyeSlash />}
       </span>
     </div>
   );
 }
 
-// ---------------- Login Page ----------------
+// ---------------- Login ----------------
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -95,7 +94,7 @@ function Login() {
   );
 }
 
-// ---------------- Signup Page ----------------
+// ---------------- Signup ----------------
 function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,7 +111,7 @@ function Signup() {
     try {
       const res = await axios.post("http://localhost:3000/user/signup", { email, password });
       setMessage(res.data.message);
-      navigate('/reviewer'); // go to code reviewer page after signup
+      navigate('/reviewer');
     } catch (err) {
       setMessage(err.response?.data?.message || "Signup failed");
     }
@@ -134,16 +133,51 @@ function Signup() {
 
 // ---------------- Code Reviewer ----------------
 function CodeReviewer() {
-  const [code, setCode] = useState(`//Write your code here`);
+  const [code, setCode] = useState(`// Write your code here`);
   const [review, setReview] = useState(``);
+
+  const [images, setImages] = useState([]);  
+  const [previews, setPreviews] = useState([]); 
 
   useEffect(() => {
     Prism.highlightAll();
   }, []);
 
+  // Handle selecting multiple images
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+
+    if (files.length + images.length > 3) {
+      alert("You can upload up to 3 images only.");
+      return;
+    }
+
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+
+    setImages(prev => [...prev, ...files]);
+    setPreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  // Remove individual image
+  const removeImage = (index) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+    setPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // Send code + all images
   async function reviewCode() {
     try {
-      const response = await axios.post('http://localhost:3000/ai/get-review', { code });
+      const formData = new FormData();
+      formData.append("code", code);
+
+      images.forEach((img) => formData.append("images", img));
+
+      const response = await axios.post(
+        'http://localhost:3000/ai/get-review',
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
       setReview(response.data);
     } catch (err) {
       setReview("Error reviewing code");
@@ -171,8 +205,43 @@ function CodeReviewer() {
               }}
             />
           </div>
-          <div onClick={reviewCode} className="reviewBtn">Click Here for Review</div>
+
+          {/* Button row */}
+          <div className="button-row">
+            <div onClick={reviewCode} className="reviewBtn">Click here for Review</div>
+
+            <label htmlFor="imageUpload" className="upload-icon">
+              <FaImage />
+            </label>
+
+            <input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              multiple
+              style={{ display: "none" }}
+              onChange={handleImageChange}
+            />
+          </div>
+
+          {/* Multiple Preview + X Buttons */}
+          {previews.length > 0 && (
+            <div className="multi-preview-container">
+              {previews.map((src, index) => (
+                <div key={index} className="image-preview-container">
+                  <span
+                    className="remove-image-btn"
+                    onClick={() => removeImage(index)}
+                  >
+                    ✖
+                  </span>
+                  <img src={src} alt="Preview" className="image-preview" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
+
         <div className="right">
           <Markdown rehypePlugins={[rehypeHighlight]}>{review}</Markdown>
         </div>
@@ -181,7 +250,7 @@ function CodeReviewer() {
   );
 }
 
-// ---------------- Main App ----------------
+// ---------------- App ----------------
 function App() {
   return (
     <Router>
